@@ -75,7 +75,7 @@ class Feeder
 
     /**
      * @param $payload : Response from getFeedDocument Function. e.g.: response['payload']
-     * @return array : Feed Processing Report.
+     * @return string : Feed Processing Report.
      */
     public function downloadFeedProcessingReport($payload)
     {
@@ -91,12 +91,8 @@ class Feeder
 
         $decryptedFile = ASECryptoStream::decrypt(file_get_contents($feedDownloadUrl), $key, $initializationVector);
         if(isset($payload['compressionAlgorithm']) && $payload['compressionAlgorithm']=='GZIP') {
-            $decryptedFile=gzdecode($decryptedFile);
+            $decryptedFile = gzdecode($decryptedFile);
         }
-        $decryptedFile = preg_replace('/\s+/S', " ", $decryptedFile);
-
-        $xml = simplexml_load_string($decryptedFile);
-        $json = json_encode($xml);
-        return json_decode($json, TRUE);
+        return $decryptedFile;
     }
 }
